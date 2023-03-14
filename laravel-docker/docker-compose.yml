@@ -1,0 +1,146 @@
+version: '3'
+
+networks:
+    api:
+        driver: bridge
+
+volumes:
+    mysql:
+        driver: local
+    redis:
+        driver: local
+
+services:
+    nginx:
+        build:
+            context: ./dockerfiles
+            dockerfile: nginx.dockerfile
+            args:
+                - UID=${UID:-1000}
+                - GID=${GID:-1000}
+        ports:
+            - "80:80"
+            - "443:443"
+        restart: unless-stopped
+        volumes:
+            - ./../:/var/www/html:delegated
+            - ./logs:/var/log/nginx
+            - ./dockerfiles/nginx/:/etc/nginx/conf.d/:ro
+            # - ./certbot/www:/var/www/certbot/:ro
+            # #### uncomment below code after dry run
+            # - ./certbot/conf/:/etc/nginx/ssl/:ro
+        depends_on:
+            - php
+            - redis
+            - mysql
+        networks:
+            - api
+
+    # certbot:
+    #     image: certbot/certbot:latest
+    #     volumes:
+    #         - ./certbot/www/:/var/www/certbot/:rw
+    #         #### uncomment below code after dry run
+    #         - ./certbot/conf/:/etc/letsencrypt/:rw
+
+    mysql:
+        image: 'mysql/mysql-server:8.0'
+        restart: unless-stopped
+        tty: true
+        ports:
+            - "3306:3306"
+        environment:
+            MYSQL_DATABASE: api_pancake
+            MYSQL_USER: sail
+            MYSQL_PASSWORD: Strong@&_password35M
+            MYSQL_ROOT_PASSWORD: Strong@&_password35M
+            TZ: "Pacific/Auckland"
+        volumes:
+            - 'mysql:/var/lib/mysql'
+        networks:
+            - api
+
+    php:
+        build:
+            context: ./dockerfiles
+            dockerfile: php.dockerfile
+            args:
+                - UID=${UID:-1000}
+                - GID=${GID:-1000}
+        ports:
+            - "9000:9000"
+        volumes:
+            - ./../:/var/www/html:delegated
+        # networks:
+        #     - laravel
+        networks:
+            - api
+
+    redis:
+        image: redis:alpine
+        restart: unless-stopped
+        ports:
+            - "6379:6379"
+        volumes:
+            - 'redis:/data'
+        networks:
+            - api
+    # queue_user:
+    #     image: queue-user
+    #     build:
+    #         context: ./dockerfiles
+    #         dockerfile: queue-user.dockerfile
+    #     restart: unless-stopped
+    #     volumes:
+    #         - ./../:/var/www/html:delegated
+    #     depends_on:
+    #         - php
+    #         - redis
+    #         - mysql
+    #     networks:
+    #         - laravel
+
+    # composer:
+    #     build:
+    #         context: ./dockerfiles
+    #         dockerfile: php.dockerfile
+    #         args:
+    #             - UID=${UID:-1000}
+    #             - GID=${GID:-1000}
+    #     volumes:
+    #         # - ./src:/var/www/html
+    #         - ./../:/var/www/html
+    #     depends_on:
+    #         - php
+    #     entrypoint: [ 'composer', '--ignore-platform-reqs' ]
+    #     networks:
+    #         - laravel
+
+    # npm:
+    #     image: node:current-alpine
+    #     volumes:
+    #         - ./src:/var/www/html
+    #     ports:
+    #         - "3000:3000"
+    #         - "3001:3001"
+    #         - "5173:5173"
+    #     working_dir: /var/www/html
+    #     entrypoint: [ 'npm' ]
+    #     networks:
+    #         - laravel
+
+    # artisan:
+    #     build:
+    #         context: ./dockerfiles
+    #         dockerfile: php.dockerfile
+    #         args:
+    #             - UID=${UID:-1000}
+    #             - GID=${GID:-1000}
+    #     volumes:
+    #         # - ./src:/var/www/html:delegated
+    #         - ./../:/var/www/html:delegated
+    #     depends_on:
+    #         - mysql
+    #     entrypoint: [ 'php', '/var/www/html/artisan' ]
+    #     networks:
+    #         - laravel

@@ -1,0 +1,113 @@
+# https://github.com/aschmelyun/docker-compose-laravel
+version: "3.8"
+services:
+  nginx:
+    image: local-www
+    build:
+      context: .
+      dockerfile: local/Dockerfile
+    container_name: nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - 443:443
+    volumes:
+      - ./../:/var/www/html
+      - ./logs:/var/log/nginx
+      # - ./certbot/www:/var/www/certbot/:ro
+      #### uncomment below code after dry run
+      # - ./certbot/conf/:/etc/nginx/ssl/:ro
+    depends_on:
+      - mysql
+      - redis
+      - php
+    networks:
+      - laravel
+    # environment:
+    #     APP_ENV: local
+    #     CONTAINER_ROLE: app
+    #     CACHE_DRIVER: redis
+    #     SESSION_DRIVER: redis
+    #     QUEUE_DRIVER: redis
+    #     REDIS_HOST: redis
+
+    # certbot:
+    # image: certbot/certbot:latest
+    # volumes:
+    #     - ./certbot/www/:/var/www/certbot/:rw
+    #     #### uncomment below code after dry run
+    #     # - ./certbot/conf/:/etc/letsencrypt/:rw
+
+  php:
+    image: local-php
+    build:
+      context: .
+      dockerfile: local/php.dockerfile
+      args:
+        - UID=${UID:-1000}
+        - GID=${GID:-1000}
+    container_name: php
+    restart: unless-stopped
+    volumes:
+      # - ./src:/var/www/html:delegated
+      - ./../:/var/www/html
+    networks:
+      - laravel
+
+  redis:
+    image: "redis:alpine"
+    container_name: redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - 'redis:/data'
+    networks:
+      - laravel
+
+  mysql:
+    image: 'mysql/mysql-server:8.0'
+    container_name: mysql
+    restart: unless-stopped
+    tty: true
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_DATABASE: myappointment
+      MYSQL_USER: sail
+      MYSQL_PASSWORD: password
+      MYSQL_ROOT_PASSWORD: password
+      SERVICE_TAGS: dev
+      SERVICE_NAME: mysql
+      TZ: "Pacific/Auckland"
+    volumes:
+      - "mysql:/var/lib/mysql"
+    networks:
+      - laravel
+  # queue:
+  #   image: local-www
+  #   container_name: queue
+  #   depends_on:
+  #     - nginx
+  #   volumes:
+  #     # - ./src/user:/var/www/html
+  #     # - ~/code/cafe8x:/var/www/html
+  #     - /home/leo/code/california:/var/www/html
+  #   networks:
+  #     - laravel
+  #   environment:
+  #     APP_ENV: local
+  #     CONTAINER_ROLE: queue
+  #     CACHE_DRIVER: redis
+  #     SESSION_DRIVER: redis
+  #     QUEUE_DRIVER: redis
+  #     REDIS_HOST: redis
+
+networks:
+  laravel:
+    driver: bridge
+volumes:
+  mysql:
+    driver: local
+  redis:
+    driver: local
