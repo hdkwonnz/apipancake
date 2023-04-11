@@ -11,10 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('branches', function (Blueprint $table) {
+        Schema::create('promotions', function (Blueprint $table) {
             $table->id();
             $table->string('code');
-            $table->string('name');
+            $table->string('branch');
+            $table->date('expiery');
+            $table->unsignedInteger('max_use');
+            $table->unsignedInteger('cur_use');
+            $table->float('dc_rate');
             $table->timestamps();
         });
     }
@@ -24,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('branches');
+        Schema::dropIfExists('promotions');
     }
 };
