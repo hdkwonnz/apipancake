@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('branch');
             $table->date('expiery');
             $table->unsignedInteger('max_use');
-            $table->unsignedInteger('cur_use');
+            $table->unsignedInteger('cur_use')->nullable();
             $table->float('dc_rate');
             $table->timestamps();
         });

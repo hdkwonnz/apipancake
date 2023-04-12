@@ -28,20 +28,24 @@ class PromotionController extends Controller
         if (!$promotion) {
             return response()->json([
                 'promotion' => "nok",
+                'dcRate' => 0,
             ]);
         }
         if ($promotion->expiery < $date) {
             return response()->json([
                 'promotion' => "nok",
+                'dcRate' => 0,
             ]);
         }
         if ($promotion->cur_use < $promotion->max_use) {
             return response()->json([
                 'promotion' => "ok",
+                'dcRate' => $promotion->dc_rate,
             ]);
         } else {
             return response()->json([
                 'promotion' => "nok",
+                'dcRate' => 0,
             ]);
         }
     }
@@ -62,7 +66,51 @@ class PromotionController extends Controller
 
     public function createPmCode(Request $request)
     {
-        $randomString = Str::random(06);
-        dd($randomString);
+        $secret = Secret::where('api_key', '=', $request->api_key)
+            ->where('branch_code', '=', $request->branch_code)
+            ->first();
+
+        if (!$secret) {
+            return response()->json([
+                'pmCode' => null,
+            ]);
+        }
+
+        $branchCode = $request->branch_code;
+        $maxIssue = $request->max_issue;
+        $expieryDate = $request->expiery;
+
+        $count = Promotion::where('branch', '=', $branchCode)
+            ->where('expiery', '=', $expieryDate)
+            ->count();
+        if ($count >= $maxIssue) {
+            return response()->json([
+                'pmCode' => null,
+            ]);
+        }
+
+        $pmCode = $this->unique_str();
+
+        Promotion::create([
+            'code' => $pmCode,
+            'branch' => $request->branch_code,
+            'expiery' => $request->expiery,
+            'max_use' => $request->max_use,
+            'dc_rate' => $request->dc_rate,
+        ]);
+
+        return response()->json([
+            'pmCode' => $pmCode,
+        ]);
+    }
+
+    private function unique_str()
+    {
+        $uniqueStr = Str::random(8);
+        while (Promotion::where('code', $uniqueStr)->exists()) {
+            $uniqueStr = Str::random(8);
+        }
+
+        return $uniqueStr;
     }
 }
