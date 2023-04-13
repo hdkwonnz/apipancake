@@ -50,6 +50,40 @@ class PromotionController extends Controller
         }
     }
 
+    public function getPromotion($apiKey, $pmCode)
+    {
+        $secret = Secret::where('api_key', '=', $apiKey)
+            ->first();
+        if (!$secret) {
+            return response()->json([
+                'branch' => null,
+                'expiery' => null,
+            ]);
+        }
+
+        $date = Carbon::now()->format('Y-m-d');
+
+        $promotion = Promotion::where('code', '=', $pmCode)
+            ->first();
+        if (!$promotion) {
+            return response()->json([
+                'branch' => null,
+                'expiery' => null,
+            ]);
+        }
+        if ($promotion->expiery < $date) {
+            return response()->json([
+                'branch' => null,
+                'expiery' => null,
+            ]);
+        }
+
+        return response()->json([
+            'branch' => $promotion->branch,
+            'expiery' => $promotion->expiery,
+        ]);
+    }
+
     public function updatePmCode(Request $request)
     {
         $secret = Secret::where('api_key', '=', $request->api_key)

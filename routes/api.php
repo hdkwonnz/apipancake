@@ -29,6 +29,8 @@ Route::post('/total', [TotalController::class, 'store'])
 ////promotion code
 Route::get('/checkPmCode/{apiKey}/{pmCode}', [PromotionController::class, 'checkPmCode'])
     ->name('checkPmCode');
+Route::get('/getPromotion/{apiKey}/{pmCode}', [PromotionController::class, 'getPromotion'])
+    ->name('getPromotion');
 Route::post('/updatePmCode', [PromotionController::class, 'updatePmCode'])
     ->name('updatePmCode');
 Route::post('/createPmCode', [PromotionController::class, 'createPmCode'])
