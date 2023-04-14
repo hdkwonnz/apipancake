@@ -147,4 +147,27 @@ class PromotionController extends Controller
 
         return $uniqueStr;
     }
+
+    public function showCouponList($apiKey, $branchCode)
+    {
+        $secret = Secret::where('api_key', '=', $apiKey)
+            ->first();
+
+        if (!$secret) {
+            return;
+        }
+        if ($secret->role != "admin") {
+            return;
+        }
+
+        $today = date('Y-m-d');
+
+        $promotions = Promotion::whereDate('expiery', '>=', $today)
+            ->where('branch', '=', $branchCode)
+            ->get();
+
+        return response()->json([
+            'coupons' => $promotions,
+        ]);
+    }
 }

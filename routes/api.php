@@ -31,6 +31,8 @@ Route::get('/checkPmCode/{apiKey}/{pmCode}', [PromotionController::class, 'check
     ->name('checkPmCode');
 Route::get('/getPromotion/{apiKey}/{pmCode}', [PromotionController::class, 'getPromotion'])
     ->name('getPromotion');
+Route::get('/showCouponList/{apiKey}/{branchCode}', [PromotionController::class, 'showCouponList'])
+    ->name('showCouponList');
 Route::post('/updatePmCode', [PromotionController::class, 'updatePmCode'])
     ->name('updatePmCode');
 Route::post('/createPmCode', [PromotionController::class, 'createPmCode'])
