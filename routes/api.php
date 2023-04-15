@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\TotalController;
 use App\Http\Controllers\Api\PromotionController;
+use App\Http\Controllers\Api\SecretController;
 
 /*
 |--------------------------------------------------------------------------
@@ -37,3 +38,15 @@ Route::post('/updatePmCode', [PromotionController::class, 'updatePmCode'])
     ->name('updatePmCode');
 Route::post('/createPmCode', [PromotionController::class, 'createPmCode'])
     ->name('createPmCode');
+
+////secret
+Route::get('/secret/{apiKey}/{branchCode}', [SecretController::class, 'index'])
+    ->name('secret.index');
+Route::get('/secret/show/{apiKey}/{id}', [SecretController::class, 'show'])
+    ->name('secret.show');
+Route::post('/createSecret', [SecretController::class, 'store'])
+    ->name('creatSecret');
+Route::post('/updateSecret', [SecretController::class, 'update'])
+    ->name('updateSecret');
+Route::post('/deleteSecret', [SecretController::class, 'destroy'])
+    ->name('deleteSecret');
