@@ -139,13 +139,6 @@ class SecretController extends Controller
             ]);
         }
 
-        if ($secret->role != "admin") {
-            $response = "You are not admin role.";
-            return response()->json([
-                'response' => $response,
-            ]);
-        }
-
         $secret = Secret::find($request->secret_id);
         $secret->delete();
 
