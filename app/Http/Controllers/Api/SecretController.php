@@ -112,7 +112,9 @@ class SecretController extends Controller
         }
 
         $secret = Secret::find($request->secret_id);
-        $secret->branch_code = $request->new_branch_code;
+        if ($secret->branch_code != 'alba') {
+            $secret->branch_code = $request->new_branch_code;
+        }
         $secret->branch_name = $request->new_branch_name;
         $secret->api_key = $request->new_api_key;
         $secret->update();
