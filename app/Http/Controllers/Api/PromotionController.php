@@ -164,6 +164,8 @@ class PromotionController extends Controller
 
         $promotions = Promotion::whereDate('expiery', '>=', $today)
             ->where('branch', '=', $branchCode)
+            ->orderBy('expiery', 'asc')
+            ->orderBy('code', 'asc')
             ->get();
 
         return response()->json([
