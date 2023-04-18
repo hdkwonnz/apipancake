@@ -172,4 +172,33 @@ class PromotionController extends Controller
             'coupons' => $promotions,
         ]);
     }
+
+    public function deleteExpireCode(Request $request)
+    {
+        $secret = Secret::where('api_key', '=', $request->api_key)
+            ->first();
+
+        if (!$secret) {
+            $response = "incorrect api key.";
+            return response()->json([
+                'response' => $response,
+            ]);
+        }
+
+        if ($secret->role != 'admin') {
+            $response = "no prmission.";
+            return response()->json([
+                'response' => $response,
+            ]);
+        }
+
+        $today = date('Y-m-d');
+        $promotion = Promotion::whereDate('expiery', '<', $today);
+        $promotion->delete();
+
+        $response = "ok";
+        return response()->json([
+            'response' => $response,
+        ]);
+    }
 }

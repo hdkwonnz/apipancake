@@ -38,6 +38,8 @@ Route::post('/updatePmCode', [PromotionController::class, 'updatePmCode'])
     ->name('updatePmCode');
 Route::post('/createPmCode', [PromotionController::class, 'createPmCode'])
     ->name('createPmCode');
+Route::post('/deleteExpireCode', [PromotionController::class, 'deleteExpireCode'])
+    ->name('deleteExpireCode');
 
 ////secret
 Route::get('/secret/{apiKey}/{branchCode}', [SecretController::class, 'index'])
