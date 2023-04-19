@@ -7,6 +7,7 @@ use App\Models\Promotion;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 
 class PromotionController extends Controller
@@ -23,7 +24,8 @@ class PromotionController extends Controller
 
         $date = Carbon::now()->format('Y-m-d');
 
-        $promotion = Promotion::where('code', '=', $pmCode)
+        // $promotion = Promotion::where('code', '=', $pmCode)
+        $promotion = Promotion::where(DB::raw('BINARY `code`'), '=', $pmCode)
             ->first();
         if (!$promotion) {
             return response()->json([
@@ -141,7 +143,11 @@ class PromotionController extends Controller
     private function unique_str()
     {
         $uniqueStr = Str::random(8);
-        while (Promotion::where('code', $uniqueStr)->exists()) {
+
+        // while (Promotion::where('code', $uniqueStr)->exists()) {
+        //     $uniqueStr = Str::random(8);
+        // }
+        while (Promotion::where(DB::raw('BINARY `code`'), $uniqueStr)->exists()) {
             $uniqueStr = Str::random(8);
         }
 
