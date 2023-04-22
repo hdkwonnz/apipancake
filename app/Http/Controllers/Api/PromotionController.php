@@ -19,6 +19,7 @@ class PromotionController extends Controller
         if (!$secret) {
             return response()->json([
                 'promotion' => "nok",
+                'dcRate' => 0,
             ]);
         }
 
@@ -91,13 +92,19 @@ class PromotionController extends Controller
         $secret = Secret::where('api_key', '=', $request->api_key)
             ->first();
         if (!$secret) {
-            return;
+            return response()->json([
+                'rerult' => "nok",
+            ]);
         }
 
         $promotion = Promotion::where('code', '=', $request->pmCode)
             ->first();
         $promotion->cur_use = $promotion->cur_use + 1;
         $promotion->update();
+
+        return response()->json([
+            'rerult' => "ok",
+        ]);
     }
 
     public function createPmCode(Request $request)
