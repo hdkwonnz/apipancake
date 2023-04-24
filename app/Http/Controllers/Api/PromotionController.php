@@ -93,18 +93,23 @@ class PromotionController extends Controller
             ->first();
         if (!$secret) {
             return response()->json([
-                'rerult' => "nok",
+                'rerult' => 'nok',
             ]);
         }
 
         $promotion = Promotion::where('code', '=', $request->pmCode)
             ->first();
-        $promotion->cur_use = $promotion->cur_use + 1;
-        $promotion->update();
-
-        return response()->json([
-            'rerult' => "ok",
-        ]);
+        if ($promotion->cur_use < $promotion->max_use) {
+            $promotion->cur_use = $promotion->cur_use + 1;
+            $promotion->update();
+            return response()->json([
+                'rerult' => 'ok',
+            ]);
+        } else {
+            return response()->json([
+                'rerult' => 'nok',
+            ]);
+        }
     }
 
     public function createPmCode(Request $request)
