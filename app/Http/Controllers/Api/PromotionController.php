@@ -12,8 +12,11 @@ use App\Http\Controllers\Controller;
 
 class PromotionController extends Controller
 {
-    public function checkPmCode($apiKey, $pmCode)
+    // public function checkPmCode($apiKey, $pmCode)
+    public function checkPmCode($pmCode, Request $request)
     {
+        $apiKey = $request->header('Authorization');
+
         $secret = Secret::where('api_key', '=', $apiKey)
             ->first();
         if (!$secret) {
@@ -53,8 +56,11 @@ class PromotionController extends Controller
         }
     }
 
-    public function getPromotion($apiKey, $pmCode)
+    // public function getPromotion($apiKey, $pmCode)
+    public function getPromotion($pmCode, Request $request)
     {
+        $apiKey = $request->header('Authorization');
+
         $secret = Secret::where('api_key', '=', $apiKey)
             ->first();
         if (!$secret) {
@@ -166,8 +172,11 @@ class PromotionController extends Controller
         return $uniqueStr;
     }
 
-    public function showCouponList($apiKey, $branchCode)
+    // public function showCouponList($apiKey, $branchCode)
+    public function showCouponList($branchCode, Request $request)
     {
+        $apiKey = $request->header('Authorization');
+
         $secret = Secret::where('api_key', '=', $apiKey)
             ->first();
 

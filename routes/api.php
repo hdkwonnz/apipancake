@@ -22,17 +22,25 @@ use App\Http\Controllers\Api\SecretController;
 // });
 
 ////sold total amount
-Route::get('/total/{apiKey}/{branchCode}/{from}/{to}', [TotalController::class, 'index'])
+// Route::get('/total/{apiKey}/{branchCode}/{from}/{to}', [TotalController::class, 'index'])
+//     ->name('total.index');
+Route::get('/total/{branchCode}/{from}/{to}', [TotalController::class, 'index'])
     ->name('total.index');
 Route::post('/total', [TotalController::class, 'store'])
     ->name('total.store');
 
 ////promotion code
-Route::get('/checkPmCode/{apiKey}/{pmCode}', [PromotionController::class, 'checkPmCode'])
+// Route::get('/checkPmCode/{apiKey}/{pmCode}', [PromotionController::class, 'checkPmCode'])
+//     ->name('checkPmCode');
+Route::get('/checkPmCode/{pmCode}', [PromotionController::class, 'checkPmCode'])
     ->name('checkPmCode');
-Route::get('/getPromotion/{apiKey}/{pmCode}', [PromotionController::class, 'getPromotion'])
+// Route::get('/getPromotion/{apiKey}/{pmCode}', [PromotionController::class, 'getPromotion'])
+//     ->name('getPromotion');
+Route::get('/getPromotion/{pmCode}', [PromotionController::class, 'getPromotion'])
     ->name('getPromotion');
-Route::get('/showCouponList/{apiKey}/{branchCode}', [PromotionController::class, 'showCouponList'])
+// Route::get('/showCouponList/{apiKey}/{branchCode}', [PromotionController::class, 'showCouponList'])
+//     ->name('showCouponList');
+Route::get('/showCouponList/{branchCode}', [PromotionController::class, 'showCouponList'])
     ->name('showCouponList');
 Route::post('/updatePmCode', [PromotionController::class, 'updatePmCode'])
     ->name('updatePmCode');
@@ -42,9 +50,13 @@ Route::post('/deleteExpireCode', [PromotionController::class, 'deleteExpireCode'
     ->name('deleteExpireCode');
 
 ////secret
-Route::get('/secret/{apiKey}/{branchCode}', [SecretController::class, 'index'])
+// Route::get('/secret/{apiKey}/{branchCode}', [SecretController::class, 'index'])
+//     ->name('secret.index');
+Route::get('/secret/{branchCode}', [SecretController::class, 'index'])
     ->name('secret.index');
-Route::get('/secret/show/{apiKey}/{id}', [SecretController::class, 'show'])
+// Route::get('/secret/show/{apiKey}/{id}', [SecretController::class, 'show'])
+//     ->name('secret.show');
+Route::get('/secret/show/{id}', [SecretController::class, 'show'])
     ->name('secret.show');
 Route::post('/createSecret', [SecretController::class, 'store'])
     ->name('creatSecret');

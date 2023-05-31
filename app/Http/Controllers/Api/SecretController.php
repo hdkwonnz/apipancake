@@ -11,8 +11,11 @@ class SecretController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index($apiKey, $branchCode)
+    // public function index($apiKey, $branchCode)
+    public function index($branchCode, Request $request)
     {
+        $apiKey = $request->header('Authorization');
+
         $secret = Secret::where('api_key', '=', $apiKey)
             ->first();
 
@@ -68,8 +71,11 @@ class SecretController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show($apiKey, $id)
+    // public function show($id, Request $request)
+    public function show($id, Request $request)
     {
+        $apiKey = $request->header('Authorization');
+
         $secret = Secret::where('api_key', '=', $apiKey)
             ->first();
 

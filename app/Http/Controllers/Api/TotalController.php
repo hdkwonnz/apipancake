@@ -12,8 +12,11 @@ class TotalController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index($apiKey, $branchCode, $from, $to)
+    // public function index($apiKey, $branchCode, $from, $to)
+    public function index($branchCode, $from, $to, Request $request)
     {
+        $apiKey = $request->header('Authorization');
+
         $secret = Secret::where('api_key', '=', $apiKey)
             ->first();
 
